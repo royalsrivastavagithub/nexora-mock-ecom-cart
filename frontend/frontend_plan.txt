@@ -1,0 +1,186 @@
+# Frontend Development Plan: Nexora Mock E-Com Cart (React)
+
+This plan outlines the development of the React frontend for the Nexora Mock E-Com Cart application, based on the provided assignment and the existing Node.js/Express backend. The goal is to create a responsive, user-friendly interface that seamlessly interacts with the backend APIs.
+
+## 1. Tech Stack & Core Libraries
+
+*   **Framework:** React (with Create React App or Vite for scaffolding)
+*   **State Management:** React Context API or Zustand (for simplicity and performance)
+*   **Routing:** React Router DOM
+*   **API Client:** Axios or native Fetch API
+*   **Styling:** Tailwind CSS or Styled Components (for responsive design and modern aesthetics)
+*   **Form Handling:** React Hook Form or Formik (for robust form validation)
+
+## 2. Core Pages/Views & Components
+
+The application will consist of the following main pages and reusable components:
+
+### Pages:
+
+1.  **Home/Product Listing Page (`/`):**
+    *   Displays a grid of all available products.
+    *   Each product card will have an "Add to Cart" button.
+    *   Should fetch products from `GET /api/products`.
+2.  **Product Detail Page (`/product/:id`):** (Optional, but good for UX)
+    *   Displays detailed information about a single product.
+    *   "Add to Cart" button with quantity selector.
+    *   Fetches product from `GET /api/products/:id`.
+3.  **Cart Page (`/cart`):**
+    *   Displays all items currently in the user's cart.
+    *   Shows product name, quantity, individual item total, and overall cart total.
+    *   "Remove" button for each item.
+    *   "Update Quantity" functionality (e.g., input field next to quantity).
+    *   "Clear Cart" button (optional, but backend supports it).
+    *   "Proceed to Checkout" button.
+    *   Fetches cart from `GET /api/cart`. Updates cart via `POST /api/cart` and `DELETE /api/cart/:itemId`.
+4.  **Checkout Page (`/checkout`):**
+    *   Form for buyer details: `buyerName`, `buyerEmail`, `shippingAddress`.
+    *   Displays a summary of cart items and total.
+    *   "Place Order" button.
+    *   Submits data to `POST /api/checkout`.
+5.  **Order Confirmation/Receipt Modal:**
+    *   Displayed after successful checkout.
+    *   Shows `orderId`, `total`, `timestamp`, and `items` from the checkout response.
+6.  **Login Page (`/login`):**
+    *   Form for user login: `email`, `password`.
+    *   Link to registration.
+    *   Submits to `POST /api/auth/login`.
+7.  **Register Page (`/register`):**
+    *   Form for user registration: `username`, `email`, `password`.
+    *   Submits to `POST /api/auth/register`.
+
+### Reusable Components:
+
+*   **Header/Navigation Bar:**
+    *   Logo/App Title.
+    *   Links to Home, Cart.
+    *   Login/Register/Logout buttons (conditionally rendered based on authentication status).
+    *   Cart icon with item count.
+*   **Product Card:** Displays product `name`, `price`, `imageUrl`, and "Add to Cart" button.
+*   **Cart Item:** Displays individual item `name`, `qty`, `priceSnapshot`, and "Remove" button.
+*   **Forms:** Generic input fields, buttons, and error display for login, register, checkout.
+*   **Modals:** For order confirmation, error messages.
+
+## 3. State Management Strategy
+
+We will use **React Context API** for global state management to keep the application lightweight and avoid external libraries unless necessary.
+
+*   **AuthContext:** Manages user authentication status, JWT token, and user information.
+    *   `user`: (object | null) - Stores logged-in user data (e.g., `username`, `email`).
+    *   `token`: (string | null) - Stores the JWT received from the backend.
+    *   `login(email, password)`: Function to handle user login, store token, and fetch user data.
+    *   `register(username, email, password)`: Function to handle user registration and login.
+    *   `logout()`: Function to clear token and user data.
+*   **CartContext:** Manages the shopping cart state.
+    *   `cartItems`: (array) - List of items in the cart (each with `productId`, `qty`, `priceSnapshot`).
+    *   `cartTotal`: (number) - Total price of items in the cart.
+    *   `addToCart(productId, qty)`: Function to add/update item in cart (calls `POST /api/cart`).
+    *   `removeFromCart(itemId)`: Function to remove item from cart (calls `DELETE /api/cart/:itemId`).
+    *   `clearCart()`: Function to clear the cart (calls `POST /api/cart/clear`).
+    *   `fetchCart()`: Function to retrieve the current cart from `GET /api/cart`.
+*   **ProductContext:** Manages the list of available products.
+    *   `products`: (array) - List of all products fetched from `GET /api/products`.
+    *   `fetchProducts()`: Function to load products.
+
+**Persistence:**
+*   The JWT token should be stored in `localStorage` or `sessionStorage` for persistence across sessions.
+*   The backend handles cart persistence via `sessionId` cookie for guests and `userId` for logged-in users. The frontend needs to ensure the `cart_session` cookie is sent with requests (Axios handles this automatically for same-origin requests).
+
+## 4. API Integration
+
+All API calls will be made using `axios` (or `fetch`).
+
+*   **Base URL:** `http://localhost:5000/api` (or from environment variable).
+*   **Authentication:** For authenticated endpoints (`/api/cart`, `/api/checkout`), include the JWT token in the `Authorization` header as `Bearer <token>`.
+*   **Guest Sessions:** The backend uses an `HttpOnly` cookie (`cart_session`) for guest carts. The frontend does not directly manage this cookie but must ensure it's sent with requests (which browsers do automatically for same-origin requests).
+*   **Error Handling:** Implement `try-catch` blocks for all API calls to handle network errors, server errors (e.g., 400, 401, 404, 500), and display user-friendly messages.
+
+### API Endpoint Mapping:
+
+*   **Get Products:** `GET /api/products` -> `ProductContext.fetchProducts()`
+*   **Add/Update Cart Item:** `POST /api/cart` -> `CartContext.addToCart(productId, qty)`
+*   **Get Cart:** `GET /api/cart` -> `CartContext.fetchCart()`
+*   **Remove Cart Item:** `DELETE /api/cart/:itemId` -> `CartContext.removeFromCart(itemId)`
+*   **Clear Cart:** `POST /api/cart/clear` -> `CartContext.clearCart()`
+*   **Register User:** `POST /api/auth/register` -> `AuthContext.register(username, email, password)`
+*   **Login User:** `POST /api/auth/login` -> `AuthContext.login(email, password)`
+*   **Checkout:** `POST /api/checkout` -> Checkout page action (sends `buyerName`, `buyerEmail`, `shippingAddress`).
+
+## 5. User Interface (UI) / User Experience (UX)
+
+*   **Responsive Design:** Use a mobile-first approach. Employ CSS frameworks (like Tailwind CSS) or media queries to ensure the UI adapts gracefully to different screen sizes.
+*   **Clear Navigation:** Intuitive header with links to key sections.
+*   **Feedback:** Provide visual feedback for user actions (e.g., loading spinners for API calls, success/error messages for form submissions, "Item added to cart" notifications).
+*   **Form Validation:** Implement client-side validation for all forms (login, register, checkout) to provide immediate feedback. Display server-side validation errors if they occur.
+*   **Empty States:** Clearly display messages for empty cart or no products available.
+*   **Product Images:** Display `imageUrl` for products. If `imageUrl` is empty, use a placeholder image.
+
+## 6. Project Structure (Example)
+
+```
+frontend/
+├── public/
+├── src/
+│   ├── App.js
+│   ├── index.js
+│   ├── index.css (or global styles)
+│   ├── api/
+│   │   └── axiosConfig.js (axios instance, interceptors for auth)
+│   │   └── productApi.js
+│   │   └── cartApi.js
+│   │   └── authApi.js
+│   ├── components/
+│   │   ├── Header.js
+│   │   ├── ProductCard.js
+│   │   ├── CartItem.js
+│   │   ├── CheckoutForm.js
+│   │   ├── LoginForm.js
+│   │   ├── RegisterForm.js
+│   │   └── Modal.js
+│   ├── contexts/
+│   │   ├── AuthContext.js
+│   │   ├── CartContext.js
+│   │   └── ProductContext.js
+│   ├── hooks/ (optional, for custom hooks)
+│   │   └── useAuth.js
+│   │   └── useCart.js
+│   ├── pages/
+│   │   ├── HomePage.js
+│   │   ├── CartPage.js
+│   │   ├── CheckoutPage.js
+│   │   ├── LoginPage.js
+│   │   └── RegisterPage.js
+│   ├── utils/
+│   │   └── helpers.js (e.g., price formatting)
+│   └── assets/ (for images, icons)
+├── package.json
+├── README.md
+```
+
+## 7. Implementation Checklist for Frontend AI
+
+1.  **Scaffold React Project:** Use `create-react-app` or `vite` to set up a new React project in the `frontend/` directory.
+2.  **Install Dependencies:** `react-router-dom`, `axios`, (optional: `zustand`, `tailwindcss` or `styled-components`, `react-hook-form`).
+3.  **Configure Axios:** Create an `axiosConfig.js` to set base URL and add request interceptors for attaching JWT token from `localStorage` to authenticated requests.
+4.  **Implement AuthContext:**
+    *   Create `AuthContext.js` with `login`, `register`, `logout` functions.
+    *   Store JWT in `localStorage` upon successful login/register.
+    *   Provide user state and auth functions to the application.
+5.  **Implement CartContext:**
+    *   Create `CartContext.js` with `cartItems`, `cartTotal`, `addToCart`, `removeFromCart`, `clearCart`, `fetchCart` functions.
+    *   Ensure `fetchCart` is called on app load and after any cart modification.
+6.  **Implement ProductContext:**
+    *   Create `ProductContext.js` with `products` state and `fetchProducts` function.
+    *   Call `fetchProducts` on initial load of the Home page.
+7.  **Develop Pages:**
+    *   **HomePage:** Fetch products using `ProductContext`, render `ProductCard` components. Implement "Add to Cart" functionality using `CartContext`.
+    *   **CartPage:** Fetch cart using `CartContext`, render `CartItem` components. Implement "Remove" and "Update Quantity" (by calling `addToCart` with new quantity) using `CartContext`. Display total and "Proceed to Checkout" button.
+    *   **CheckoutPage:** Create a form for `buyerName`, `buyerEmail`, `shippingAddress`. Display cart summary. On submission, call `POST /api/checkout` and then display the `Order Confirmation Modal`.
+    *   **LoginPage & RegisterPage:** Implement forms, call `AuthContext` functions, and redirect on success.
+8.  **Develop Components:** Create all necessary reusable components as outlined above.
+9.  **Implement Routing:** Set up `react-router-dom` for navigation between pages. Protect `/checkout` and `/cart` routes, redirecting to login if not authenticated (or handle guest flow).
+10. **Styling:** Apply responsive styling using the chosen method (Tailwind CSS or Styled Components).
+11. **Error Handling & Feedback:** Display appropriate error messages for API failures and form validation. Show loading states.
+12. **README Update:** Add instructions for setting up and running the frontend.
+
+This plan provides a clear roadmap for building the frontend, leveraging the existing backend API and fulfilling the assignment requirements.
