@@ -1,8 +1,44 @@
 
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const Cart = require('../models/Cart');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+const mergeCarts = async (userId, sessionId) => {
+  const guestCart = await Cart.findOne({ sessionId });
+  if (!guestCart) {
+    return;
+  }
+
+  let userCart = await Cart.findOne({ userId });
+
+  if (!userCart) {
+    // If user has no cart, just assign the guest cart to the user
+    guestCart.userId = userId;
+    guestCart.sessionId = null;
+    await guestCart.save();
+    return;
+  }
+
+  // Merge items
+  for (const guestItem of guestCart.items) {
+    const userItemIndex = userCart.items.findIndex(
+      (item) => item.productId.toString() === guestItem.productId.toString()
+    );
+
+    if (userItemIndex > -1) {
+      // Update quantity if item exists
+      userCart.items[userItemIndex].qty += guestItem.qty;
+    } else {
+      // Add new item
+      userCart.items.push(guestItem);
+    }
+  }
+
+  await userCart.save();
+  await Cart.findByIdAndDelete(guestCart._id);
+};
 
 // @desc    Register new user
 // @route   POST /api/auth/register
@@ -34,6 +70,8 @@ const registerUser = async (req, res) => {
     });
 
     await user.save();
+
+    await mergeCarts(user._id, req.sessionId);
 
     // Generate JWT
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -71,6 +109,8 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+
+    await mergeCarts(user._id, req.sessionId);
 
     // Generate JWT
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
