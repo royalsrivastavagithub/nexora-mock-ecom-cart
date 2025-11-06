@@ -196,10 +196,12 @@ async function runManualTests() {
     const checkoutRes = await axiosInstance.post('/checkout', {
       buyerName: 'Test Buyer',
       buyerEmail: registerEmail,
+      shippingAddress: '123 Test Street, Test City, Test State, 12345, Test Country', // Added shippingAddress
     }, {
       headers: { Authorization: `Bearer ${userToken}` },
     });
     logResult(`Checkout successful! Order ID: ${checkoutRes.data.orderId}, Total: ${checkoutRes.data.total}, Timestamp: ${checkoutRes.data.timestamp}`);
+    logResult(`Full checkout response data: ${JSON.stringify(checkoutRes.data, null, 2)}`);
   } catch (error) {
     logError('Error during checkout', error);
     return;

@@ -7,11 +7,11 @@ const mongoose = require('mongoose');
 // @route   POST /api/checkout
 // @access  Private (user or guest with session)
 exports.checkout = async (req, res) => {
-  const { buyerName, buyerEmail } = req.body;
+  const { buyerName, buyerEmail, shippingAddress } = req.body; // Add shippingAddress
 
-  // Basic validation for buyer info
-  if (!buyerName || !buyerEmail) {
-    return res.status(400).json({ message: 'Buyer name and email are required for checkout.' });
+  // Basic validation for buyer info and shipping address
+  if (!buyerName || !buyerEmail || !shippingAddress) { // Add shippingAddress to validation
+    return res.status(400).json({ message: 'Buyer name, email, and shipping address are required for checkout.' });
   }
 
   try {
@@ -34,6 +34,7 @@ exports.checkout = async (req, res) => {
       userId: req.user ? req.user._id : null,
       buyerName,
       buyerEmail,
+      shippingAddress, // Add shippingAddress here
       items: cart.items.map(item => ({
         productId: item.productId._id,
         qty: item.qty,
@@ -51,11 +52,18 @@ exports.checkout = async (req, res) => {
     cart.updatedAt = Date.now();
     await cart.save();
 
+    // Populate product details for the response
+    await order.populate('items.productId'); // Populate product details in the order items
+
+    // Convert to plain object to ensure populated fields are included in the response
+    const orderObject = order.toObject({ getters: true, virtuals: true });
+
     res.status(201).json({
-      orderId: order._id,
-      total: order.total,
-      timestamp: order.createdAt,
-      message: 'Order placed successfully (mock payment).'
+      orderId: orderObject._id,
+      total: orderObject.total,
+      timestamp: orderObject.createdAt,
+      message: 'Order placed successfully (mock payment).',
+      items: orderObject.items // Include the items from the plain object
     });
 
   } catch (error) {

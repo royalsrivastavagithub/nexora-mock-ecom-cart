@@ -10,6 +10,7 @@ const OrderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   buyerName: { type: String, required: true },
   buyerEmail: { type: String, required: true },
+  shippingAddress: { type: String, required: true },
   items: [OrderItemSchema],
   total: { type: Number, required: true },
   currency: { type: String, default: "INR" },
