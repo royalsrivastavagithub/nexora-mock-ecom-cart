@@ -19,6 +19,7 @@ app.use(express.json());
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 app.get('/', (req, res) => {
   res.send('API is running...');
@@ -32,6 +33,9 @@ app.use('/api/products', productRoutes);
 
 // Mount cart routes
 app.use('/api/cart', cartRoutes);
+
+// Mount order routes
+app.use('/api/checkout', orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 
