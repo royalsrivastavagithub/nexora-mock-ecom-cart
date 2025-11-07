@@ -36,7 +36,7 @@ const LoginPage = () => {
       navigate(from, { replace: true });
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      setError(err.response?.data?.message || (err.response?.status === 401 ? 'Invalid email or password.' : 'Login failed. Please check your credentials.'));
     } finally {
       setIsSubmitting(false);
     }

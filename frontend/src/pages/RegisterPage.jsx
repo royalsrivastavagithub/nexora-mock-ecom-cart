@@ -38,7 +38,7 @@ const RegisterPage = () => {
       navigate(from, { replace: true });
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      setError(err.response?.data?.message || (err.response?.status === 409 ? 'A user with this email already exists.' : 'Registration failed. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }
