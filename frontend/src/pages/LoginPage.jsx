@@ -15,11 +15,16 @@ const LoginPage = () => {
     email: '',
     password: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
@@ -57,17 +62,34 @@ const LoginPage = () => {
               required
             />
           </div>
-          <div>
+          <div className="relative">
             <label htmlFor="password" className="block text-gray-700">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md pr-10"
               required
             />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center pt-6 text-sm leading-5"
+            >
+              {showPassword ? (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 text-gray-500">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12c1.29 3.245 4.61 6 10.066 6 1.825 0 3.502-.34 4.967-.934M6.228 6.228A10.451 10.451 0 0 1 12 4.5c5.456 0 8.776 2.755 10.066 6a10.477 10.477 0 0 1-1.523 2.471M6.228 6.228 3 3m0 0 3.228 3.228m0 0L3 3m0 0l18 18m-6.772-6.772A3 3 0 0 1 12 9a2.99 2.99 0 0 1 2.228.978m-3.45 3.45A2.99 2.99 0 0 1 9 12" />
+</svg>
+
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 text-gray-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              )}
+            </button>
           </div>
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
