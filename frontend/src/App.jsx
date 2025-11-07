@@ -16,13 +16,13 @@ const App = () => {
   const { loading } = useAuth();
 
   if (loading) {
-    return <div className="text-center p-8">Loading application...</div>;
+    return <div className="text-center p-8" >Loading application...</div>;
   }
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow">
+      <main className="grow">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/cart" element={<CartPage />} />
