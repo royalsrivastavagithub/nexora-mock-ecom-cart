@@ -100,24 +100,70 @@ Open your browser and navigate to the frontend URL to access the application.
 
 ```
 nexora-mock-ecom-cart/
+├───.git/                   # Git version control
+├───.gitignore              # Specifies intentionally untracked files to ignore
+├───package-lock.json       # Records the exact dependency tree
+├───package.json            # Root package configuration for concurrent scripts
+├───README.md               # Project documentation
 ├───backend/
-│   ├───config/             # Database configuration
-│   ├───controllers/        # API logic handlers
-│   ├───middleware/         # Authentication and session middleware
-│   ├───models/             # Mongoose schemas for data models
-│   ├───routes/             # API route definitions
+│   ├───.gitignore          # Specifies intentionally untracked files to ignore
+│   ├───package-lock.json   # Records the exact dependency tree
+│   ├───package.json        # Backend package configuration
 │   ├───server.js           # Main backend server file
-│   ├───package.json
-│   └───.env                # Environment variables (create this file)
+│   ├───config/             # Database configuration
+│   │   └───db.js           # Database connection setup
+│   ├───controllers/        # API logic handlers
+│   │   ├───cartController.js
+│   │   ├───orderController.js
+│   │   ├───productController.js
+│   │   └───userController.js
+│   ├───middleware/         # Authentication and session middleware
+│   │   ├───auth.js
+│   │   ├───session.js
+│   │   └───validation.js
+│   ├───models/             # Mongoose schemas for data models
+│   │   ├───Cart.js
+│   │   ├───Order.js
+│   │   ├───Product.js
+│   │   └───User.js
+│   ├───node_modules/       # Backend dependencies
+│   └───routes/             # API route definitions
+│       ├───cartRoutes.js
+│       ├───orderRoutes.js
+│       ├───productRoutes.js
+│       └───userRoutes.js
 ├───frontend/
-│   ├───public/             # Static assets
-│   ├───src/
-│   │   ├───components/     # Reusable React components
-│   │   ├───contexts/       # React Context API for state management
-│   │   ├───pages/          # Page-level React components
-│   │   └───App.jsx         # Main React application component
-│   ├───index.html
-│   ├───package.json
-│   └───vite.config.js      # Vite configuration for proxying API requests
-└───package.json            # Root package.json for concurrent scripts
+│   ├───.gitignore          # Specifies intentionally untracked files to ignore
+│   ├───eslint.config.js    # ESLint configuration
+│   ├───index.html          # Main HTML file
+│   ├───package-lock.json   # Records the exact dependency tree
+│   ├───package.json        # Frontend package configuration
+│   ├───README.md           # Frontend specific documentation
+│   ├───tailwind.config.js  # Tailwind CSS configuration
+│   ├───vite.config.js      # Vite configuration for proxying API requests
+│   ├───node_modules/       # Frontend dependencies
+│   └───src/
+│       ├───App.jsx         # Main React application component
+│       ├───index.css       # Global CSS styles
+│       ├───main.jsx        # Entry point for React application
+│       ├───components/     # Reusable React components
+│       │   ├───Header.jsx
+│       │   └───PrivateRoute.jsx
+│       ├───contexts/       # React Context API for state management
+│       │   ├───ApiContext.jsx
+│       │   ├───AppProviders.jsx
+│       │   ├───AuthContext.jsx
+│       │   ├───CartContext.jsx
+│       │   └───ProductContext.jsx
+│       ├───pages/          # Page-level React components
+│       │   ├───CartPage.jsx
+│       │   ├───CheckoutPage.jsx
+│       │   ├───HomePage.jsx
+│       │   ├───LoginPage.jsx
+│       │   ├───MyAccountPage.jsx
+│       │   ├───OrderConfirmationPage.jsx
+│       │   ├───OrdersPage.jsx
+│       │   └───RegisterPage.jsx
+│       └───utils/          # Utility functions
+└───node_modules/           # Root level dependencies (e.g., concurrently)
 ```
