@@ -85,15 +85,11 @@ npm run dev
 Open your browser and navigate to the frontend URL to access the application.
 
 ## Screenshots
-*(Placeholder for screenshots)*
-<img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-29-19" src="https://github.com/user-attachments/assets/9095b9f1-cab6-4a8d-8f4c-afef2b5ea40f" /><img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-29-28" src="https://github.com/user-attachments/assets/b26314e6-4dd1-4026-bde6-38a1d4056f08" /><img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-30-02" src="https://github.com/user-attachments/assets/df3d00a5-6ddb-46dd-a695-dc12ea7561ab" />
+<img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-29-19" src="https://github.com/user-attachments/assets/9095b9f1-cab6-4a8d-8f4c-afef2b5ea40f" />
 <img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-30-22" src="https://github.com/user-attachments/assets/06e9075b-cf27-4e1b-a9f8-9bf3bc384bb9" />
 <img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-30-27" src="https://github.com/user-attachments/assets/8c1afc9d-2cc1-4fa2-bfc9-7fdfaa90ca18" />
 <img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-30-31" src="https://github.com/user-attachments/assets/48b64fd7-2cf7-40bd-9ad7-1ed819688f65" />
-<img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-30-48" src="https://github.com/user-attachments/assets/05e9b88b-d6cd-44cd-9a5c-bb0cf1530746" />
 <img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-30-54" src="https://github.com/user-attachments/assets/95b80c0b-7a03-4225-8857-12eb29418bbc" />
-
-<img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-31-01" src="https://github.com/user-attachments/assets/450669f2-7f3d-4c55-80cb-7e894219d04b" />
 <img width="2560" height="1440" alt="Screenshot from 2025-11-07 20-31-15" src="https://github.com/user-attachments/assets/33813da7-e19b-411f-aea1-e72ccd1ed7f9" />
 
 
