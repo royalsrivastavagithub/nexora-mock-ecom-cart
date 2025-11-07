@@ -171,7 +171,7 @@ const createTestUserIfNotExist = async () => {
     if (!testUser) {
       console.log('Test user not found. Creating test user...');
       const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash('Password123!#', salt); // A strong password for testing
+      const passwordHash = await bcrypt.hash('Password123!@#', salt); // A strong password for testing
 
       const user = new User({
         username: 'test',
