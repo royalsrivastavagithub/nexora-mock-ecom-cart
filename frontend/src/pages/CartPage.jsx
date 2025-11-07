@@ -54,13 +54,15 @@ const CartItem = ({ item }) => {
             +
           </button>
         </div>
-        <p className="font-semibold">₹{item.qty * item.priceSnapshot}</p>
-        <button
-          onClick={() => removeFromCart(item._id)}
-          className="text-red-500 hover:text-red-700"
-        >
-          Remove
-        </button>
+        <div className="flex items-center space-x-4">
+          <p className="font-semibold w-24 text-right">₹{item.qty * item.priceSnapshot}</p>
+          <button
+            onClick={() => removeFromCart(item._id)}
+            className="text-red-500 hover:text-red-700"
+          >
+            Remove
+          </button>
+        </div>
       </div>
     </div>
   );
