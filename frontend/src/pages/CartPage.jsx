@@ -12,6 +12,16 @@ const CartItem = ({ item }) => {
     }
   };
 
+  const handleDecrement = () => {
+    if (item.qty > 1) {
+      addToCart(item.productId._id, item.qty - 1);
+    }
+  };
+
+  const handleIncrement = () => {
+    addToCart(item.productId._id, item.qty + 1);
+  };
+
   return (
     <div className="flex items-center justify-between border-b py-4">
       <div className="flex items-center space-x-4">
@@ -22,13 +32,28 @@ const CartItem = ({ item }) => {
         </div>
       </div>
       <div className="flex items-center space-x-4">
-        <input
-          type="number"
-          min="1"
-          value={item.qty}
-          onChange={handleQuantityChange}
-          className="w-16 p-2 border rounded-md text-center"
-        />
+        <div className="flex items-center border rounded-md">
+          <button
+            onClick={handleDecrement}
+            className="bg-gray-200 text-gray-700 px-3 py-1 rounded-l-md hover:bg-gray-300 focus:outline-none"
+            disabled={item.qty <= 1}
+          >
+            -
+          </button>
+          <input
+            type="number"
+            min="1"
+            value={item.qty}
+            onChange={handleQuantityChange}
+            className="w-12 p-1 text-center border-y-0 border-x focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          />
+          <button
+            onClick={handleIncrement}
+            className="bg-gray-200 text-gray-700 px-3 py-1 rounded-r-md hover:bg-gray-300 focus:outline-none"
+          >
+            +
+          </button>
+        </div>
         <p className="font-semibold">₹{item.qty * item.priceSnapshot}</p>
         <button
           onClick={() => removeFromCart(item._id)}
