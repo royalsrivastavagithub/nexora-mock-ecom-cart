@@ -7,11 +7,24 @@ const mongoose = require('mongoose');
 // @route   POST /api/checkout
 // @access  Private (user or guest with session)
 exports.checkout = async (req, res) => {
-  const { buyerName, buyerEmail, shippingAddress } = req.body; // Add shippingAddress
+  // Determine buyer details based on whether the user is logged in
+  const isGuest = !req.user;
+  let buyerName, buyerEmail, shippingAddress;
 
-  // Basic validation for buyer info and shipping address
-  if (!buyerName || !buyerEmail || !shippingAddress) { // Add shippingAddress to validation
-    return res.status(400).json({ message: 'Buyer name, email, and shipping address are required for checkout.' });
+  if (isGuest) {
+    // Guest checkout: details must be in the request body
+    ({ buyerName, buyerEmail, shippingAddress } = req.body);
+    if (!buyerName || !buyerEmail || !shippingAddress) {
+      return res.status(400).json({ message: 'Buyer name, email, and shipping address are required for guest checkout.' });
+    }
+  } else {
+    // Logged-in user: use user data, but allow overriding shipping address from body
+    buyerName = req.user.username;
+    buyerEmail = req.user.email;
+    shippingAddress = req.body.shippingAddress || req.user.address;
+    if (!shippingAddress) {
+        return res.status(400).json({ message: 'Shipping address is required.' });
+    }
   }
 
   try {
@@ -32,9 +45,9 @@ exports.checkout = async (req, res) => {
     // Create order
     const order = new Order({
       userId: req.user ? req.user._id : null,
-      buyerName,
-      buyerEmail,
-      shippingAddress, // Add shippingAddress here
+      buyerName, // Use determined buyerName
+      buyerEmail, // Use determined buyerEmail
+      shippingAddress, // Use determined shippingAddress
       items: cart.items.map(item => ({
         productId: item.productId._id,
         qty: item.qty,
@@ -53,17 +66,16 @@ exports.checkout = async (req, res) => {
     await cart.save();
 
     // Populate product details for the response
-    await order.populate('items.productId'); // Populate product details in the order items
+    await order.populate('items.productId');
 
     // Convert to plain object to ensure populated fields are included in the response
     const orderObject = order.toObject({ getters: true, virtuals: true });
 
     res.status(201).json({
+      ...orderObject, // Spread the order object to include all its properties
       orderId: orderObject._id,
-      total: orderObject.total,
       timestamp: orderObject.createdAt,
       message: 'Order placed successfully (mock payment).',
-      items: orderObject.items // Include the items from the plain object
     });
 
   } catch (error) {

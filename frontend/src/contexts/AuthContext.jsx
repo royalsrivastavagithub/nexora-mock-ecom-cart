@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useApi } from './ApiContext';
 
 const AuthContext = createContext();
@@ -9,34 +9,49 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchUser = useCallback(async () => {
     if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // You could add a /api/auth/me endpoint to verify token and get user data
-      // For now, we'll assume the token is valid if it exists.
-      // setUser can be populated here from a fetch to a protected route
+      try {
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        const { data } = await api.get('/auth/me');
+        setUser(data);
+      } catch (error) {
+        console.error('Failed to fetch user data', error);
+        // If token is invalid, clear it
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
+      }
     } else {
+      setUser(null);
       delete api.defaults.headers.common['Authorization'];
     }
     setLoading(false);
   }, [token, api]);
 
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
   const login = async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', data.token);
     setToken(data.token);
+    await fetchUser(); // Fetch user details immediately after login
   };
 
-  const register = async (username, email, password) => {
-    const { data } = await api.post('/auth/register', { username, email, password });
+  const register = async (username, email, password, address) => {
+    const { data } = await api.post('/auth/register', { username, email, password, address });
     localStorage.setItem('token', data.token);
     setToken(data.token);
+    await fetchUser(); // Fetch user details immediately after registration
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
+    delete api.defaults.headers.common['Authorization'];
   };
 
   return (

@@ -49,7 +49,7 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { username, email, password } = req.body;
+  const { username, email, password, address } = req.body;
 
   try {
     // Check if user already exists
@@ -67,6 +67,7 @@ const registerUser = async (req, res) => {
       username,
       email,
       passwordHash,
+      address,
     });
 
     await user.save();
@@ -125,4 +126,16 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// @desc    Get current user data
+// @route   GET /api/auth/me
+// @access  Private
+const getMe = async (req, res) => {
+  // req.user is set by the protect middleware
+  if (req.user) {
+    res.json(req.user);
+  } else {
+    res.status(401).json({ message: 'Not authorized, no user found' });
+  }
+};
+
+module.exports = { registerUser, loginUser, getMe };

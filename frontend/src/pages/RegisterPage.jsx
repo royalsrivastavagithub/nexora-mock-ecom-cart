@@ -9,6 +9,7 @@ const RegisterPage = () => {
     username: '',
     email: '',
     password: '',
+    address: '',
   });
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,7 +23,7 @@ const RegisterPage = () => {
     setError(null);
     setIsSubmitting(true);
     try {
-      await register(formData.username, formData.email, formData.password);
+      await register(formData.username, formData.email, formData.password, formData.address);
       navigate('/'); // Redirect to home or dashboard after registration
     } catch (err) {
       console.error('Registration error:', err);
@@ -72,6 +73,18 @@ const RegisterPage = () => {
               className="w-full p-2 border border-gray-300 rounded-md"
               required
             />
+          </div>
+          <div>
+            <label htmlFor="address" className="block text-gray-700">Address</label>
+            <textarea
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              rows="3"
+              className="w-full p-2 border border-gray-300 rounded-md"
+              required
+            ></textarea>
           </div>
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}

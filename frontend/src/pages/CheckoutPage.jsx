@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 
 const CheckoutPage = () => {
   const { cart, loading, checkout } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -14,6 +16,16 @@ const CheckoutPage = () => {
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        buyerName: user.username || '',
+        buyerEmail: user.email || '',
+        shippingAddress: user.address || '',
+      });
+    }
+  }, [user]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -23,8 +35,8 @@ const CheckoutPage = () => {
     setError(null);
     setIsProcessing(true);
 
-    if (!formData.buyerName || !formData.buyerEmail || !formData.shippingAddress) {
-      setError('All fields are required.');
+    if (!formData.shippingAddress) {
+      setError('Shipping address is required.');
       setIsProcessing(false);
       return;
     }
@@ -44,7 +56,7 @@ const CheckoutPage = () => {
     return <div className="text-center p-8">Loading cart for checkout...</div>;
   }
 
-  if (cart.items.length === 0) {
+  if (!user && cart.items.length === 0) {
     return (
       <div className="container mx-auto p-4 text-center">
         <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
@@ -82,8 +94,9 @@ const CheckoutPage = () => {
               name="buyerName"
               value={formData.buyerName}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md bg-gray-100"
               required
+              readOnly={!!user}
             />
           </div>
           <div>
@@ -94,8 +107,9 @@ const CheckoutPage = () => {
               name="buyerEmail"
               value={formData.buyerEmail}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md bg-gray-100"
               required
+              readOnly={!!user}
             />
           </div>
           <div>

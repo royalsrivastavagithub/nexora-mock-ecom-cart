@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 
 const Header = () => {
-  const { token, logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const { cart } = useCart();
 
   const cartItemCount = cart.items.reduce((total, item) => total + item.qty, 0);
@@ -19,9 +19,12 @@ const Header = () => {
             Cart ({cartItemCount})
           </Link>
           {token ? (
-            <button onClick={logout} className="bg-red-500 px-3 py-1 rounded hover:bg-red-600">
-              Logout
-            </button>
+            <>
+              {user && <span className="text-gray-300">Welcome, {user.username}</span>}
+              <button onClick={logout} className="bg-red-500 px-3 py-1 rounded hover:bg-red-600">
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <Link to="/login" className="hover:text-gray-300">Login</Link>
