@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const RegisterPage = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -24,7 +27,7 @@ const RegisterPage = () => {
     setIsSubmitting(true);
     try {
       await register(formData.username, formData.email, formData.password, formData.address);
-      navigate('/'); // Redirect to home or dashboard after registration
+      navigate(from, { replace: true });
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
@@ -98,7 +101,7 @@ const RegisterPage = () => {
           </button>
         </form>
         <p className="text-center mt-4 text-gray-600">
-          Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Login here</Link>
+          Already have an account? <Link to="/login" state={{ from: location.state?.from }} className="text-blue-500 hover:underline">Login here</Link>
         </p>
       </div>
     </div>

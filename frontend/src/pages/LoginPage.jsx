@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -22,7 +25,7 @@ const LoginPage = () => {
     setIsSubmitting(true);
     try {
       await login(formData.email, formData.password);
-      navigate('/'); // Redirect to home or dashboard after login
+      navigate(from, { replace: true });
     } catch (err) {
       console.error('Login error:', err);
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
@@ -35,6 +38,9 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
+        <p className="text-center text-gray-600 mb-4">
+          {location.state?.from ? 'Please log in to continue to checkout.' : ''}
+        </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-gray-700">Email</label>
@@ -72,7 +78,7 @@ const LoginPage = () => {
           </button>
         </form>
         <p className="text-center mt-4 text-gray-600">
-          Don't have an account? <Link to="/register" className="text-blue-500 hover:underline">Register here</Link>
+          Don't have an account? <Link to="/register" state={{ from: location.state?.from }} className="text-blue-500 hover:underline">Register here</Link>
         </p>
       </div>
     </div>

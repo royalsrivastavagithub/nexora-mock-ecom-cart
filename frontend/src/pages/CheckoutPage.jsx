@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const CheckoutPage = () => {
-  const { cart, loading, checkout } = useCart();
-  const { user } = useAuth();
+  const { cart, loading: cartLoading, checkout } = useCart();
+  const { user, token, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     buyerName: '',
@@ -15,6 +16,12 @@ const CheckoutPage = () => {
   });
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !token && cart.items.length > 0) {
+      navigate('/login', { state: { from: location }, replace: true });
+    }
+  }, [authLoading, token, cart.items.length, navigate, location]);
 
   useEffect(() => {
     if (user) {
@@ -52,11 +59,15 @@ const CheckoutPage = () => {
     }
   };
 
-  if (loading) {
-    return <div className="text-center p-8">Loading cart for checkout...</div>;
+  if (cartLoading || authLoading) {
+    return <div className="text-center p-8">Loading...</div>;
   }
 
-  if (!user && cart.items.length === 0) {
+  if (!token && cart.items.length > 0) {
+    return <div className="text-center p-8">Redirecting to login...</div>;
+  }
+
+  if (cart.items.length === 0) {
     return (
       <div className="container mx-auto p-4 text-center">
         <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
@@ -130,7 +141,7 @@ const CheckoutPage = () => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 disabled:opacity-50"
-            disabled={isProcessing}
+            disabled={isProcessing || cart.items.length === 0}
           >
             {isProcessing ? 'Processing...' : 'Place Order'}
           </button>
