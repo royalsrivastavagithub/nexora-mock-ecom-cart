@@ -12,8 +12,8 @@ const LoginPage = () => {
   }
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'test@example.com',
+    password: 'Password123!@#',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
