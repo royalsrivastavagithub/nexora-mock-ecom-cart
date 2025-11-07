@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
@@ -6,8 +6,22 @@ import { useCart } from '../contexts/CartContext';
 const Header = () => {
   const { user, token, logout } = useAuth();
   const { cart } = useCart();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const cartItemCount = cart.items.reduce((total, item) => total + item.qty, 0);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="bg-gray-800 text-white p-4 shadow-md">
@@ -18,13 +32,22 @@ const Header = () => {
           <Link to="/cart" className="hover:text-gray-300 flex items-center">
             Cart ({cartItemCount})
           </Link>
-          {token ? (
-            <>
-              {user && <span className="text-gray-300">Welcome, {user.username}</span>}
-              <button onClick={logout} className="bg-red-500 px-3 py-1 rounded hover:bg-red-600">
-                Logout
+          {token && user ? (
+            <div className="relative" ref={dropdownRef}>
+              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center space-x-2 hover:text-gray-300">
+                <span>Hey, {user.username}</span>
+                <svg className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
-            </>
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+                  <Link to="/orders" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</Link>
+                  <Link to="/account" onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</Link>
+                  <button onClick={() => { logout(); setIsDropdownOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <Link to="/login" className="hover:text-gray-300">Login</Link>

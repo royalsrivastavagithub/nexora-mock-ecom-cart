@@ -4,7 +4,7 @@ const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
 // @desc    Process checkout and create an order
-// @route   POST /api/checkout
+// @route   POST /api/orders
 // @access  Private (user or guest with session)
 exports.checkout = async (req, res) => {
   // Determine buyer details based on whether the user is logged in
@@ -78,6 +78,26 @@ exports.checkout = async (req, res) => {
       message: 'Order placed successfully (mock payment).',
     });
 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Get logged in user orders
+// @route   GET /api/orders
+// @access  Private
+exports.getUserOrders = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
+
+  try {
+    const orders = await Order.find({ userId: req.user._id })
+      .populate('items.productId', 'name imageUrl')
+      .sort({ createdAt: -1 });
+
+    res.json(orders);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

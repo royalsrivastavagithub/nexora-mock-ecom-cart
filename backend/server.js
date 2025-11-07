@@ -35,7 +35,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 
 // Mount order routes
-app.use('/api/checkout', orderRoutes);
+app.use('/api/orders', orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 

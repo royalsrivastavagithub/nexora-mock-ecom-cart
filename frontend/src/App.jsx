@@ -6,7 +6,10 @@ import CheckoutPage from './pages/CheckoutPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
+import OrdersPage from './pages/OrdersPage';
+import MyAccountPage from './pages/MyAccountPage';
 import Header from './components/Header';
+import PrivateRoute from './components/PrivateRoute';
 import { useAuth } from './contexts/AuthContext';
 
 const App = () => {
@@ -27,6 +30,24 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/orders"
+            element={
+              <PrivateRoute>
+                <OrdersPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <PrivateRoute>
+                <MyAccountPage />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </main>
     </div>

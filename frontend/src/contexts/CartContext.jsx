@@ -59,7 +59,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const checkout = async (checkoutData) => {
-    const { data } = await api.post('/checkout', checkoutData);
+    const { data } = await api.post('/orders', checkoutData);
     fetchCart(); // Refetch cart to confirm it's empty
     return data; // Return order confirmation
   }
