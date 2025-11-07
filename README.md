@@ -94,7 +94,7 @@ Open your browser and navigate to the frontend URL to access the application.
 
 
 ## Demo Video
-Watch the demo video: [Nexora E-Com project demo](https://youtu.be/X8WiDxeXjB0)
+Watch the demo video here : [Nexora E-Com project demo](https://youtu.be/X8WiDxeXjB0)
 
 
 ## Project Structure
@@ -149,7 +149,7 @@ nexora-mock-ecom-cart/
 │       ├───main.jsx        # Entry point for React application
 │       ├───components/     # Reusable React components
 │       │   ├───Header.jsx
-│       │   └───PrivateRoute.jsx
+│       │   └───PrivateRoute.jsxWatch the demo vide
 │       ├───contexts/       # React Context API for state management
 │       │   ├───ApiContext.jsx
 │       │   ├───AppProviders.jsx
