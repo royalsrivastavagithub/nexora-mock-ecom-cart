@@ -1,4 +1,3 @@
-
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const Cart = require('../models/Cart');
@@ -138,4 +137,47 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getMe };
+// @desc    Update user profile
+// @route   PUT /api/auth/me
+// @access  Private
+const updateUserDetails = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if email is being updated and if the new email is already taken
+    if (req.body.email && req.body.email.toLowerCase() !== user.email) {
+      const existingUser = await User.findOne({ email: req.body.email.toLowerCase() });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+      user.email = req.body.email.toLowerCase();
+    }
+
+    if (typeof req.body.address !== 'undefined') {
+      user.address = req.body.address;
+    }
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      address: updatedUser.address,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { registerUser, loginUser, getMe, updateUserDetails };
