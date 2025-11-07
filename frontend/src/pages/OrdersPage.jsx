@@ -37,9 +37,9 @@ const OrdersPage = () => {
     <div className="container mx-auto p-4 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">My Orders</h1>
       {orders.length === 0 ? (
-        <div className="text-center bg-blue-50 shadow-md rounded-lg p-8 border border-blue-200">
-          <p className="text-xl text-blue-800">You haven't placed any orders yet.</p>
-          <Link to="/" className="text-blue-600 hover:underline mt-4 inline-block">Start Shopping</Link>
+        <div className="flex flex-col items-center justify-center bg-blue-50 shadow-md rounded-lg p-8 border border-blue-200 min-h-[calc(100vh-150px)]">
+          <p className="text-2xl text-blue-800 font-semibold mb-6">You haven't placed any orders yet.</p>
+          <Link to="/" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 text-lg font-semibold transition duration-300 ease-in-out">Start Shopping</Link>
         </div>
       ) : (
         <div className="space-y-6">
