@@ -6,7 +6,10 @@ const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
+  let from = location.state?.from?.pathname || '/';
+  if (from === '/checkout') {
+    from = '/cart';
+  }
 
   const [formData, setFormData] = useState({
     email: '',
