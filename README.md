@@ -94,7 +94,8 @@ Open your browser and navigate to the frontend URL to access the application.
 
 
 ## Demo Video
-*(Placeholder for Loom/YouTube unlisted link)*
+Watch the demo video: [Nexora E-Com project demo](https://youtu.be/X8WiDxeXjB0)
+
 
 ## Project Structure
 
