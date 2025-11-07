@@ -2,6 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const Product = require('./models/Product'); // Import Product model
+const User = require('./models/User'); // Import User model
+const bcrypt = require('bcryptjs'); // Import bcryptjs
 
 dotenv.config();
 
@@ -163,8 +165,33 @@ const seedProductsIfEmpty = async () => {
   }
 };
 
-// Connect to database and then seed products
+const createTestUserIfNotExist = async () => {
+  try {
+    const testUser = await User.findOne({ email: 'test@example.com' });
+    if (!testUser) {
+      console.log('Test user not found. Creating test user...');
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash('password123!@#', salt); // A strong password for testing
+
+      const user = new User({
+        username: 'testuser',
+        email: 'test@example.com',
+        passwordHash,
+        address: '123 Test Street, Testville',
+      });
+      await user.save();
+      console.log('Test user created successfully!');
+    } else {
+      console.log('Test user already exists. Skipping creation.');
+    }
+  } catch (error) {
+    console.error('Error creating test user:', error);
+  }
+};
+
+// Connect to database and then seed products and create test user
 connectDB().then(() => {
   seedProductsIfEmpty();
+  createTestUserIfNotExist();
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
