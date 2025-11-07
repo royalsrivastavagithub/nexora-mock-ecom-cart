@@ -48,7 +48,7 @@ const OrdersPage = () => {
               <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b-2 border-gray-200 pb-4 mb-4">
                 <div className="mb-4 sm:mb-0 flex-grow break-words">
                   <p className="font-semibold text-lg text-gray-800">Order ID: <span className="font-normal text-gray-600 break-all">{order._id}</span></p>
-                  <p className="font-semibold text-gray-700">Date: <span className="font-normal text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</span></p>
+                  <p className="font-semibold text-gray-700">Date: <span className="font-normal text-gray-600">{new Date(order.createdAt).toLocaleString()}</span></p>
                 </div>
                 <p className="font-bold text-xl text-right flex-shrink-0 ml-4 text-blue-700">Total: ₹{order.total}</p>
               </div>
